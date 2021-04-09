@@ -42,12 +42,7 @@ module.exports = cds.service.impl(async (srv) => {
                 let ordenesRepetidas = await cds.run(SELECT.from(Order_Details).where({ order_ID: arregloOrderID[i] }));
 
                 if (ordenesRepetidas.length === 1) { // order_ID : 11023
-
-                    ordenesRepetidas.forEach(element => {
-                        arregloEliminarOrden.push({
-                            order_ID: element.order_ID
-                        })
-                    });
+                    ordenesRepetidas.forEach(element => arregloEliminarOrden.push(element.order_ID));
                 }
             }
 
@@ -56,17 +51,17 @@ module.exports = cds.service.impl(async (srv) => {
 
             for (let i = 0; i < arregloEliminarOrden.length; i++) {
                 // Se eliminan las Orders donde tenga 1 sólo detalle y sea el producto a eliminar
-                await cds.run(DELETE.from(Orders).where({ ID: arregloEliminarOrden[i].order_ID }));
-                console.log(`Orden número ${arregloEliminarOrden[i].order_ID} eliminada`);
+                await cds.run(DELETE.from(Orders).where({ ID: arregloEliminarOrden[i] }));
+                console.log(`Orden número ${arregloEliminarOrden[i]} eliminada`);
             }
 
             // Se elemina el Products deseado
             await cds.run(DELETE.from(Products).where({ ID: product_ID }));
-
+            return `El producto y sus relaciones han sido borradas con éxito`;
         } catch (error) {
             console.log(error);
             return `Explotus`;
         }
     });
 
-}); // 177
+});
