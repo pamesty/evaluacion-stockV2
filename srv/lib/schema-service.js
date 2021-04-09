@@ -34,16 +34,12 @@ module.exports = cds.service.impl(async (srv) => {
             let arregloOrderID = [],
                 arregloEliminarOrden = [];
 
-            await cds.foreach(SELECT.from(Order_Details).where({ product_ID: product_ID }), each => {
-                // Guardo los order_ID en un arreglo
-                arregloOrderID.push({
-                    order_ID: each.order_ID
-                });
-            });
+            // Guardo los order_ID en un arreglo
+            await cds.foreach(SELECT.from(Order_Details).where({ product_ID: product_ID }), each => arregloOrderID.push(each.order_ID));
 
             // Recorro todos los order_ID y consulto cuantas veces se repite este ID en la entidad Orders, de existir sólo 1 coincidencia se guarda en un arreglo nuevo
             for (let i = 0; i < arregloOrderID.length; i++) {
-                let ordenesRepetidas = await cds.run(SELECT.from(Order_Details).where({ order_ID: arregloOrderID[i].order_ID }));
+                let ordenesRepetidas = await cds.run(SELECT.from(Order_Details).where({ order_ID: arregloOrderID[i] }));
 
                 if (ordenesRepetidas.length === 1) { // order_ID : 11023
 
